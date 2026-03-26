@@ -166,7 +166,7 @@ export function AdminDashboard({
   };
 
   return (
-    <div className="min-h-screen bg-base p-6">
+    <div className="min-h-screen bg-base p-3 sm:p-6">
       <div className="max-w-7xl mx-auto">
         {error && (
           <div className="bg-danger/15 border border-danger/40 text-danger p-4 rounded-smpanel mb-6 font-mono text-xs tracking-wide">
@@ -180,11 +180,11 @@ export function AdminDashboard({
           </div>
         )}
 
-        <h1 className="text-4xl font-display font-bold text-textPrimary mb-2">Super Admin</h1>
+        <h1 className="text-2xl sm:text-4xl font-display font-bold text-textPrimary mb-2">Super Admin</h1>
         <p className="bz-sub mb-6">MANAGE USERS, TEAMS & PLAYERS</p>
 
-        <div className="mb-6">
-          <Button variant="danger" onClick={() => setShowResetAuctionModal(true)}>
+        <div className="mb-4 sm:mb-6">
+          <Button variant="danger" onClick={() => setShowResetAuctionModal(true)} className="w-full sm:w-auto">
             Reset Auction
           </Button>
         </div>
@@ -192,11 +192,32 @@ export function AdminDashboard({
         {/* Users Tab */}
         {activeTab === 'users' && (
           <Card>
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
               <h2 className="text-2xl font-display font-bold text-textPrimary">Users</h2>
-              <Button onClick={() => setShowUserModal(true)}>Create User</Button>
+              <Button onClick={() => setShowUserModal(true)} className="w-full sm:w-auto">Create User</Button>
             </div>
-            <div className="overflow-x-auto">
+
+            <div className="md:hidden space-y-3">
+              {users.map((user) => {
+                const userTeam = teams.find((team) => team.id === user.team_id);
+                return (
+                  <div key={user.id} className="border border-subtle bg-elevated rounded-smpanel p-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-textPrimary font-semibold break-words">{user.username}</p>
+                        <p className="text-xs text-textSecondary capitalize mt-1">{user.role.replace('_', ' ')}</p>
+                        <p className="text-xs text-textMuted mt-1">Team: {userTeam?.name || '-'}</p>
+                      </div>
+                      <Button size="sm" variant="danger" onClick={() => onDeleteUser(user.id)}>
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-elevated">
                   <tr>
@@ -235,9 +256,9 @@ export function AdminDashboard({
         {/* Teams Tab */}
         {activeTab === 'teams' && (
           <Card>
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
               <h2 className="text-2xl font-display font-bold text-textPrimary">Teams</h2>
-              <Button onClick={() => setShowTeamModal(true)}>Create Team</Button>
+              <Button onClick={() => setShowTeamModal(true)} className="w-full sm:w-auto">Create Team</Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {teams.map((team) => (
@@ -260,11 +281,64 @@ export function AdminDashboard({
         {/* Players Tab */}
         {activeTab === 'players' && (
           <Card>
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
               <h2 className="text-2xl font-display font-bold text-textPrimary">Players</h2>
-              <Button onClick={() => setShowPlayerModal(true)}>Create Player</Button>
+              <Button onClick={() => setShowPlayerModal(true)} className="w-full sm:w-auto">Create Player</Button>
             </div>
-            <div className="overflow-x-auto">
+
+            <div className="md:hidden space-y-3">
+              {sortedPlayers.map((player) => {
+                const playerTeam = teams.find((team) => team.id === player.team_id);
+                return (
+                  <div key={player.id} className="border border-subtle bg-elevated rounded-smpanel p-3 space-y-3">
+                    <div>
+                      <p className="text-textPrimary font-semibold break-words">{player.name}</p>
+                      <p className="text-xs text-textSecondary">{player.role}</p>
+                      <p className="text-xs text-textMuted mt-1">Batch {player.batch_number} · ${player.base_price}</p>
+                      <p className="text-xs text-textMuted">Team: {playerTeam?.name || '-'}</p>
+                    </div>
+
+                    <select
+                      value={getSelectedTeamForPlayer(player)}
+                      onChange={(e) =>
+                        setPlayerTeamSelections((prev) => ({
+                          ...prev,
+                          [player.id]: e.target.value,
+                        }))
+                      }
+                      className="bz-select"
+                    >
+                      <option value="">No team</option>
+                      {teams.map((team) => (
+                        <option key={team.id} value={team.id}>
+                          {team.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        size="sm"
+                        variant="primary"
+                        onClick={() => handleApplyPlayerTeam(player)}
+                        disabled={isSubmitting}
+                      >
+                        Update Team
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        onClick={() => onDeletePlayer(player.id)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-elevated">
                   <tr>

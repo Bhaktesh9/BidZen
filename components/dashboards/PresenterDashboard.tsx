@@ -58,8 +58,8 @@ export function PresenterDashboard({
   }
 
   return (
-    <div className="h-[calc(100vh-64px)] bg-base p-4 overflow-hidden">
-      <div className="max-w-6xl mx-auto h-full flex flex-col">
+    <div className="min-h-[calc(100vh-64px)] md:h-[calc(100vh-64px)] bg-base p-3 sm:p-4 overflow-y-auto md:overflow-hidden">
+      <div className="max-w-6xl mx-auto min-h-full md:h-full flex flex-col">
         {announcement && (
           <div className="fixed inset-0 z-40 pointer-events-none flex items-start justify-center pt-20 px-4">
             <div
@@ -78,20 +78,20 @@ export function PresenterDashboard({
                   ? 'ROUND TRANSITION'
                   : 'FINAL STATUS'}
               </p>
-              <h3 className="text-2xl font-display font-bold text-textPrimary">{announcement.title}</h3>
+              <h3 className="text-xl sm:text-2xl font-display font-bold text-textPrimary">{announcement.title}</h3>
               <p className="text-textSecondary mt-1">{announcement.detail}</p>
             </div>
           </div>
         )}
 
         {error && (
-          <div className="bg-danger/15 border border-danger/40 text-danger p-4 rounded-smpanel mb-6 font-mono text-xs tracking-wide">
+          <div className="bg-danger/15 border border-danger/40 text-danger p-3 sm:p-4 rounded-smpanel mb-4 sm:mb-6 font-mono text-xs tracking-wide">
             {error}
           </div>
         )}
 
-        <div className="mb-4">
-          <h1 className="text-4xl font-display font-bold text-textPrimary">Live Auction Stage</h1>
+        <div className="mb-3 sm:mb-4">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-textPrimary">Live Auction Stage</h1>
           <p className="bz-sub mt-1">BATCH {String(currentBatch).padStart(2, '0')} — LIVE</p>
         </div>
 
@@ -115,22 +115,22 @@ export function PresenterDashboard({
             </Button>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 flex-1 min-h-0">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 sm:gap-4 flex-1 min-h-0">
             <div className="lg:col-span-3 min-h-0">
               <Card className="h-full">
                 {currentPlayer ? (
                   <div key={currentPlayerKey} className="h-full flex flex-col gap-4 min-h-0 animate-fade-in">
-                    <div className="flex items-center justify-between gap-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       <div>
                         <p className="bz-sub">Current Player</p>
-                        <h3 className="text-3xl font-display font-extrabold text-textPrimary leading-tight">
+                        <h3 className="text-2xl sm:text-3xl font-display font-extrabold text-textPrimary leading-tight">
                           {currentPlayer.name}
                         </h3>
                         <p className="text-textSecondary capitalize mt-1">{currentPlayer.role}</p>
                       </div>
-                      <div className="text-right">
+                      <div className="sm:text-right">
                         <p className="bz-sub">Base Price</p>
-                        <p className="text-4xl font-display font-extrabold text-gold leading-none">
+                        <p className="text-3xl sm:text-4xl font-display font-extrabold text-gold leading-none">
                           ${currentPlayer.base_price.toLocaleString()}
                         </p>
                       </div>

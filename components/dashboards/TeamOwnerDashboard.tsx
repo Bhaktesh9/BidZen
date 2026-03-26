@@ -111,14 +111,14 @@ export function TeamOwnerDashboard({
                   className="border border-subtle bg-elevated rounded-smpanel overflow-hidden min-h-[220px]"
                 >
                   {player.image_url ? (
-                    <div className="relative w-full h-32">
+                    <div className="relative w-full h-40 sm:h-44 bg-card border-b border-subtle">
                       <Image
                         src={player.image_url}
                         alt={player.name}
                         fill
                         unoptimized
                         sizes="(max-width: 1024px) 100vw, 33vw"
-                        className="object-cover"
+                        className="object-contain p-2"
                       />
                     </div>
                   ) : (

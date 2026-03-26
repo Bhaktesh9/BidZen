@@ -55,18 +55,18 @@ export function ControllerDashboard({
   }
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-base p-4 overflow-y-auto">
+    <div className="min-h-[calc(100vh-64px)] bg-base p-3 sm:p-4 overflow-y-auto">
       <div className="max-w-6xl mx-auto min-h-full flex flex-col pb-3">
         {error && (
-          <div className="bg-danger/15 border border-danger/40 text-danger p-4 rounded-smpanel mb-6 font-mono text-xs tracking-wide">
+          <div className="bg-danger/15 border border-danger/40 text-danger p-3 sm:p-4 rounded-smpanel mb-4 sm:mb-6 font-mono text-xs tracking-wide">
             {error}
           </div>
         )}
 
-        <h1 className="text-3xl font-display font-bold text-textPrimary mb-1">Bid Controller</h1>
-        <p className="bz-sub mb-3">FAST ACTIONS — BATCH {String(currentBatch).padStart(2, '0')} IN PROGRESS</p>
+        <h1 className="text-2xl sm:text-3xl font-display font-bold text-textPrimary mb-1">Bid Controller</h1>
+        <p className="bz-sub mb-3 sm:mb-4">FAST ACTIONS — BATCH {String(currentBatch).padStart(2, '0')} IN PROGRESS</p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 sm:gap-4">
           <div className="lg:col-span-3">
             <Card className="h-full" title={`Current Player · Batch ${String(currentBatch).padStart(2, '0')}`}>
               {currentPlayer ? (
