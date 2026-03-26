@@ -1,0 +1,5 @@
+name,role,image_url,base_price,batch_number
+Virat Kohli,Batsman,https://<project-ref>.supabase.co/storage/v1/object/public/player-images/batch-1/virat-kohli.jpg,1500,1
+AB de Villiers,Batsman,https://<project-ref>.supabase.co/storage/v1/object/public/player-images/batch-1/ab-de-villiers.jpg,1400,1
+Jasprit Bumrah,Bowler,https://<project-ref>.supabase.co/storage/v1/object/public/player-images/batch-1/jasprit-bumrah.jpg,1200,1
+Hardik Pandya,All-rounder,https://<project-ref>.supabase.co/storage/v1/object/public/player-images/batch-2/hardik-pandya.jpg,900,2
