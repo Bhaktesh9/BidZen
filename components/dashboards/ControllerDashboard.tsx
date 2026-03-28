@@ -34,6 +34,10 @@ export function ControllerDashboard({
   const [selectedTeam, setSelectedTeam] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMarkingUnsold, setIsMarkingUnsold] = useState(false);
+  const batchLabel = currentBatch === 10 ? 'UNSOLD BATCH' : `BATCH ${String(currentBatch).padStart(2, '0')}`;
+  const currentPlayerTitle = currentBatch === 10
+    ? 'Current Player - Unsold Batch'
+    : `Current Player · Batch ${String(currentBatch).padStart(2, '0')}`;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,11 +80,11 @@ export function ControllerDashboard({
         )}
 
         <h1 className="text-2xl sm:text-3xl font-display font-bold text-textPrimary mb-1">Bid Controller</h1>
-        <p className="bz-sub mb-3 sm:mb-4">FAST ACTIONS — BATCH {String(currentBatch).padStart(2, '0')} IN PROGRESS</p>
+        <p className="bz-sub mb-3 sm:mb-4">FAST ACTIONS — {batchLabel} IN PROGRESS</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 sm:gap-4">
           <div className="lg:col-span-3">
-            <Card className="h-full" title={`Current Player · Batch ${String(currentBatch).padStart(2, '0')}`}>
+            <Card className="h-full" title={currentPlayerTitle}>
               {currentPlayer ? (
                 <div className="h-full flex flex-col gap-3">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

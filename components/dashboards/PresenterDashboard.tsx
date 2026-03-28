@@ -39,6 +39,7 @@ export function PresenterDashboard({
   error,
 }: PresenterDashboardProps) {
   const [isStarting, setIsStarting] = useState(false);
+  const batchLabel = currentBatch === 10 ? 'UNSOLD BATCH' : `BATCH ${String(currentBatch).padStart(2, '0')}`;
 
   const handleStartAuction = async () => {
     setIsStarting(true);
@@ -92,7 +93,7 @@ export function PresenterDashboard({
 
         <div className="mb-3 sm:mb-4">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-textPrimary">Live Auction Stage</h1>
-          <p className="bz-sub mt-1">BATCH {String(currentBatch).padStart(2, '0')} — LIVE</p>
+          <p className="bz-sub mt-1">{batchLabel} — LIVE</p>
         </div>
 
         {!auctionStarted ? (
@@ -166,7 +167,7 @@ export function PresenterDashboard({
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 bg-elevated border border-subtle rounded-smpanel">
                     <p className="bz-sub">Batch</p>
-                    <p className="text-3xl font-display font-bold text-primary leading-none">{String(currentBatch).padStart(2, '0')}</p>
+                    <p className="text-3xl font-display font-bold text-primary leading-none">{currentBatch === 10 ? 'UNSOLD' : String(currentBatch).padStart(2, '0')}</p>
                   </div>
                   <div className="p-3 bg-elevated border border-subtle rounded-smpanel">
                     <p className="bz-sub">Remaining In Batch</p>

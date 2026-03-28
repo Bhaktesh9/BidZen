@@ -47,7 +47,7 @@ export function TeamOwnerDashboard({
   }
 
   return (
-    <div className="min-h-screen bg-base p-6">
+    <div className="min-h-screen bg-base p-3 sm:p-6">
       <div className="max-w-5xl mx-auto">
         {error && (
           <div className="bg-danger/15 border border-danger/40 text-danger p-4 rounded-smpanel mb-6 font-mono text-xs tracking-wide">
@@ -55,17 +55,17 @@ export function TeamOwnerDashboard({
           </div>
         )}
 
-        <Card className="mb-6 relative overflow-hidden">
+        <Card className="mb-4 sm:mb-6 relative overflow-hidden">
           <div className="absolute -top-12 -right-12 w-52 h-52 bg-[radial-gradient(circle,rgba(72,187,120,0.14)_0%,transparent_65%)] pointer-events-none" />
           <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <p className="bz-sub mb-2">YOUR TEAM</p>
-              <h1 className="text-3xl md:text-4xl font-display font-bold text-textPrimary">{team.name}</h1>
-              <p className="text-textSecondary text-sm mt-1">Team Owner Dashboard</p>
+              <p className="bz-sub mb-1 sm:mb-2">YOUR TEAM</p>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-textPrimary break-words">{team.name}</h1>
+              <p className="text-textSecondary text-xs sm:text-sm mt-1">Team Owner Dashboard</p>
             </div>
             <div className="text-left md:text-right">
               <p className="bz-sub mb-1">Remaining Budget</p>
-              <p className="text-4xl font-display font-extrabold text-success">
+              <p className="text-3xl sm:text-4xl font-display font-extrabold text-success">
                 ${team.points.toLocaleString()}
               </p>
               <p className="text-textMuted text-xs font-mono">points available</p>
@@ -74,23 +74,23 @@ export function TeamOwnerDashboard({
         </Card>
 
         {/* Points Overview */}
-        <Card className="mb-6">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-elevated border border-subtle rounded-smpanel">
+        <Card className="mb-4 sm:mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <div className="text-center p-3 sm:p-4 bg-elevated border border-subtle rounded-smpanel">
               <p className="bz-sub">Remaining Points</p>
-              <p className="text-3xl font-display font-extrabold text-success mt-2">
+              <p className="text-2xl sm:text-3xl font-display font-extrabold text-success mt-2">
                 ${team.points.toLocaleString()}
               </p>
             </div>
-            <div className="text-center p-4 bg-elevated border border-subtle rounded-smpanel">
+            <div className="text-center p-3 sm:p-4 bg-elevated border border-subtle rounded-smpanel">
               <p className="bz-sub">Players Purchased</p>
-              <p className="text-3xl font-display font-extrabold text-primary mt-2">
+              <p className="text-2xl sm:text-3xl font-display font-extrabold text-primary mt-2">
                 {purchasedPlayers.length}
               </p>
             </div>
-            <div className="text-center p-4 bg-elevated border border-subtle rounded-smpanel">
+            <div className="text-center p-3 sm:p-4 bg-elevated border border-subtle rounded-smpanel">
               <p className="bz-sub">Total Spent</p>
-              <p className="text-3xl font-display font-extrabold text-sold mt-2">
+              <p className="text-2xl sm:text-3xl font-display font-extrabold text-sold mt-2">
                 ${(10000 - team.points).toLocaleString()}
               </p>
             </div>
@@ -104,14 +104,14 @@ export function TeamOwnerDashboard({
               No players purchased yet.
             </p>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {purchasedPlayers.map((player) => (
                 <div
                   key={player.id}
-                  className="border border-subtle bg-elevated rounded-smpanel overflow-hidden min-h-[220px]"
+                  className="border border-subtle bg-elevated rounded-smpanel overflow-hidden min-h-[200px] sm:min-h-[220px]"
                 >
                   {player.image_url ? (
-                    <div className="relative w-full h-40 sm:h-44 bg-card border-b border-subtle">
+                    <div className="relative w-full h-36 sm:h-44 bg-card border-b border-subtle">
                       <Image
                         src={player.image_url}
                         alt={player.name}
@@ -128,12 +128,12 @@ export function TeamOwnerDashboard({
                       </div>
                     </div>
                   )}
-                  <div className="p-4">
-                    <h3 className="font-bold text-textPrimary">{player.name}</h3>
-                    <p className="text-sm text-textSecondary capitalize">{player.role}</p>
+                  <div className="p-3 sm:p-4">
+                    <h3 className="font-bold text-textPrimary text-sm sm:text-base break-words">{player.name}</h3>
+                    <p className="text-xs sm:text-sm text-textSecondary capitalize">{player.role}</p>
                     <div className="mt-2 pt-2 border-t border-subtle">
                       <p className="bz-sub">Purchased for</p>
-                      <p className="text-lg font-display font-bold text-gold">
+                      <p className="text-base sm:text-lg font-display font-bold text-gold">
                         ${player.sold_price?.toLocaleString()}
                       </p>
                     </div>

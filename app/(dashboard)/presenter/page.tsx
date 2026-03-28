@@ -151,11 +151,14 @@ export default function PresenterPage() {
         8000
       );
     } else if (batchChanged) {
+      const isUnsoldBatch = auctionState.current_batch === 10;
       showAnnouncement(
         {
           type: 'batch',
-          title: 'Next Batch Incoming',
-          detail: `Batch ${String(auctionState.current_batch).padStart(2, '0')} is now live`,
+          title: isUnsoldBatch ? 'Unsold Batch Incoming' : 'Next Batch Incoming',
+          detail: isUnsoldBatch
+            ? 'Unsold Batch is now live'
+            : `Batch ${String(auctionState.current_batch).padStart(2, '0')} is now live`,
         },
         5000
       );

@@ -62,6 +62,8 @@ export function AdminDashboard({
   });
   const [showUserPassword, setShowUserPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const formatBatchLabel = (batchNumber: number) =>
+    batchNumber === 10 ? 'Unsold Batch' : `Batch ${batchNumber}`;
 
   const sortedPlayers = [...players].sort((firstPlayer, secondPlayer) => {
     if (firstPlayer.batch_number !== secondPlayer.batch_number) {
@@ -262,24 +264,26 @@ export function AdminDashboard({
               <h2 className="text-2xl font-display font-bold text-textPrimary">Teams</h2>
               <Button onClick={() => setShowTeamModal(true)} className="w-full sm:w-auto">Create Team</Button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {teams.map((team) => (
                 <div
                   key={team.id}
-                  className="border border-subtle bg-elevated rounded-smpanel p-4 cursor-pointer hover:border-primary hover:bg-elevated/80 transition-all"
+                  className="border border-subtle bg-elevated rounded-smpanel p-3 sm:p-4 cursor-pointer hover:border-primary hover:bg-elevated/80 transition-all"
                   onClick={() => {
                     setSelectedTeamForSquad(team);
                     setShowTeamSquadModal(true);
                   }}
                 >
-                  <h3 className="text-lg font-bold text-textPrimary mb-2">{team.name}</h3>
-                  <p className="text-textSecondary mb-4">Points: ${team.points.toLocaleString()}</p>
-                  <p className="text-xs text-textMuted mb-4">
+                  <h3 className="text-base sm:text-lg font-bold text-textPrimary mb-1 break-words">{team.name}</h3>
+                  <p className="text-sm text-textSecondary mb-2">Points: ${team.points.toLocaleString()}</p>
+                  <p className="text-xs text-textMuted mb-3">
                     Players: {players.filter((p) => p.team_id === team.id).length}
                   </p>
+                  <p className="text-[11px] uppercase tracking-wider text-primary/80 mb-3">Tap to view squad</p>
                   <Button
                     size="sm"
                     variant="danger"
+                    className="w-full sm:w-auto"
                     onClick={(e) => {
                       e.stopPropagation();
                       onDeleteTeam(team.id);
@@ -309,7 +313,7 @@ export function AdminDashboard({
                     <div>
                       <p className="text-textPrimary font-semibold break-words">{player.name}</p>
                       <p className="text-xs text-textSecondary">{player.role}</p>
-                      <p className="text-xs text-textMuted mt-1">Batch {player.batch_number} · ${player.base_price}</p>
+                      <p className="text-xs text-textMuted mt-1">{formatBatchLabel(player.batch_number)} · ${player.base_price}</p>
                       <p className="text-xs text-textMuted">Team: {playerTeam?.name || '-'}</p>
                     </div>
 
@@ -372,7 +376,7 @@ export function AdminDashboard({
                       <tr key={player.id} className="border-t border-subtle hover:bg-white/5">
                         <td className="px-6 py-3 text-textPrimary">{player.name}</td>
                         <td className="px-6 py-3 text-textSecondary">{player.role}</td>
-                        <td className="px-6 py-3 text-textSecondary">{player.batch_number}</td>
+                        <td className="px-6 py-3 text-textSecondary">{player.batch_number === 10 ? 'Unsold Batch' : player.batch_number}</td>
                         <td className="px-6 py-3 text-textSecondary">${player.base_price}</td>
                         <td className="px-6 py-3 text-textSecondary">{playerTeam?.name || '-'}</td>
                         <td className="px-6 py-3">
@@ -601,7 +605,8 @@ export function AdminDashboard({
 
         <Modal
           isOpen={showTeamSquadModal}
-          title={selectedTeamForSquad ? `${selectedTeamForSquad.name} - Squad` : 'Team Squad'}
+          title="Team Squad"
+          hideFooter
           onClose={() => {
             setShowTeamSquadModal(false);
             setSelectedTeamForSquad(null);
@@ -614,27 +619,32 @@ export function AdminDashboard({
         >
           {selectedTeamForSquad ? (
             <div className="space-y-4">
+              <div className="p-3 bg-primary/10 border border-primary/30 rounded-smpanel">
+                <p className="text-xs text-textSecondary">Selected Team</p>
+                <p className="text-base sm:text-lg font-bold text-textPrimary break-words">{selectedTeamForSquad.name}</p>
+              </div>
+
               <div className="p-4 bg-elevated border border-subtle rounded-smpanel">
                 <p className="text-sm text-textSecondary mb-1">Team Budget</p>
                 <p className="text-2xl font-bold text-success">${selectedTeamForSquad.points.toLocaleString()}</p>
               </div>
 
               <div>
-                <h3 className="text-lg font-bold text-textPrimary mb-3">Players ({players.filter((p) => p.team_id === selectedTeamForSquad.id).length})</h3>
+                <h3 className="text-base sm:text-lg font-bold text-textPrimary mb-3">Players ({players.filter((p) => p.team_id === selectedTeamForSquad.id).length})</h3>
                 {players.filter((p) => p.team_id === selectedTeamForSquad.id).length > 0 ? (
-                  <div className="space-y-2 max-h-96 overflow-y-auto">
+                  <div className="space-y-2 max-h-[52vh] sm:max-h-96 overflow-y-auto pr-1">
                     {players
                       .filter((p) => p.team_id === selectedTeamForSquad.id)
                       .sort((a, b) => a.name.localeCompare(b.name))
                       .map((player) => (
                         <div key={player.id} className="p-3 border border-subtle bg-elevated rounded-smpanel">
-                          <div className="flex justify-between items-start">
+                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
                             <div>
                               <p className="font-semibold text-textPrimary">{player.name}</p>
                               <p className="text-xs text-textSecondary capitalize">{player.role}</p>
-                              <p className="text-xs text-textMuted mt-1">Batch {player.batch_number}</p>
+                              <p className="text-xs text-textMuted mt-1">{formatBatchLabel(player.batch_number)}</p>
                             </div>
-                            <div className="text-right">
+                            <div className="text-left sm:text-right">
                               <p className="text-sm font-bold text-gold">${player.sold_price?.toLocaleString() || 'N/A'}</p>
                               <p className="text-xs text-textMuted">sold price</p>
                             </div>

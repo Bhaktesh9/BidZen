@@ -23,7 +23,7 @@ function verifyAuth(request: NextRequest, requiredRole?: string) {
 
 /**
  * POST /api/auction/mark-unsold
- * Mark current player as unsold and move to batch 7
+ * Mark current player as unsold and move to batch 10
  */
 export async function POST(request: NextRequest) {
   try {
@@ -60,11 +60,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Mark player as unsold by moving to batch 7
+    // Mark player as unsold by moving to batch 10
     const { error: updateError } = await supabaseAdmin
       .from('players')
       .update({
-        batch_number: 7,
+        batch_number: 10,
       })
       .eq('id', currentPlayer.id);
 
@@ -105,8 +105,8 @@ export async function POST(request: NextRequest) {
         nextBatch = firstUnsoldInNextBatch[0].batch_number;
         nextIndex = 0;
       } else {
-        // Move to batch 7 (unsold batch) if no more regular batches
-        nextBatch = 7;
+        // Move to batch 10 (unsold batch) if no more regular batches
+        nextBatch = 10;
         nextIndex = 0;
       }
     }
