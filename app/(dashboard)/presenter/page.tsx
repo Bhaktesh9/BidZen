@@ -223,7 +223,9 @@ export default function PresenterPage() {
   ).length;
 
   // Find low points teams
-  const lowPointsTeams = (teams as Team[]).filter((t) => t.points < 1000);
+  const lowPointsTeams = (teams as Team[]).filter(
+    (t) => t.points < 1000 && t.name.trim().toLowerCase() !== 'unsold'
+  );
 
   // Calculate total raised
   const totalRaised = players.reduce((sum, p) => sum + (p.sold_price || 0), 0);

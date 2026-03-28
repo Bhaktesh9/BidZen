@@ -12,8 +12,18 @@ interface EndingPageProps {
 }
 
 export function EndingPage({ teams, players, totalRaised }: EndingPageProps) {
+  const unsoldTeamIds = new Set(
+    teams
+      .filter((team) => team.name.trim().toLowerCase() === 'unsold')
+      .map((team) => team.id)
+  );
+
+  const isPlayerUnsold = (player: Player) => !player.team_id || unsoldTeamIds.has(player.team_id);
+
   // Calculate team statistics
-  const teamStats = teams.map((team) => {
+  const teamStats = teams
+    .filter((team) => team.name.trim().toLowerCase() !== 'unsold')
+    .map((team) => {
     const teamPlayers = players.filter((p) => p.team_id === team.id);
     const totalSpent = teamPlayers.reduce((sum, p) => sum + (p.sold_price || 0), 0);
     const playersAcquired = teamPlayers.length;
@@ -34,7 +44,7 @@ export function EndingPage({ teams, players, totalRaised }: EndingPageProps) {
   );
 
   // Count unsold players
-  const unsoldPlayers = players.filter((p) => !p.team_id);
+  const unsoldPlayers = players.filter(isPlayerUnsold);
 
   return (
     <div className="min-h-[calc(100vh-64px)] bg-base p-3 sm:p-4 overflow-y-auto">
@@ -62,7 +72,7 @@ export function EndingPage({ teams, players, totalRaised }: EndingPageProps) {
           <Card className="text-center p-6 sm:p-8">
             <p className="bz-sub mb-2">Total Players Sold</p>
             <p className="text-4xl sm:text-5xl font-display font-bold text-primary">
-              {players.filter((p) => p.team_id).length}
+              {players.filter((p) => !isPlayerUnsold(p)).length}
             </p>
             <p className="text-xs sm:text-sm text-textSecondary mt-2">
               out of {players.length} total
@@ -76,7 +86,7 @@ export function EndingPage({ teams, players, totalRaised }: EndingPageProps) {
             </p>
             <p className="text-xs sm:text-sm text-textSecondary mt-2">
               {players.length > 0
-                ? `Avg: $${Math.round(totalRaised / players.filter((p) => p.team_id).length).toLocaleString()}`
+                ? `Avg: $${Math.round(totalRaised / Math.max(1, players.filter((p) => !isPlayerUnsold(p)).length)).toLocaleString()}`
                 : 'No sales'}
             </p>
           </Card>

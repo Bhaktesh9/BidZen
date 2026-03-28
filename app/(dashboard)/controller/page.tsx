@@ -134,13 +134,14 @@ export default function ControllerPage() {
   const playersInBatch = players.filter(
     (p) => p.batch_number === auctionState?.current_batch && p.batch_number !== 7 && !p.team_id
   ).length;
+  const activeTeams = (teams as Team[]).filter((team) => team.name.trim().toLowerCase() !== 'unsold');
 
   return (
     <>
       <Navbar user={user} onLogout={handleLogout} />
       <ControllerDashboard
         currentPlayer={currentPlayer}
-        teams={teams as Team[]}
+        teams={activeTeams}
         playersRemaining={playersRemaining}
         playersInBatch={playersInBatch}
         currentBatch={auctionState?.current_batch || 1}

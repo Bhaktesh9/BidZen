@@ -21,6 +21,38 @@ function verifyAuth(request: NextRequest, requiredRole?: string) {
   }
 }
 
+async function getOrCreateUnsoldTeamId(): Promise<string> {
+  const { data: existingTeam, error: existingTeamError } = await supabaseAdmin
+    .from('teams')
+    .select('id')
+    .ilike('name', 'unsold')
+    .limit(1)
+    .maybeSingle();
+
+  if (existingTeamError) {
+    throw existingTeamError;
+  }
+
+  if (existingTeam?.id) {
+    return existingTeam.id;
+  }
+
+  const { data: createdTeam, error: createTeamError } = await supabaseAdmin
+    .from('teams')
+    .insert({
+      name: 'Unsold',
+      points: 0,
+    })
+    .select('id')
+    .single();
+
+  if (createTeamError || !createdTeam?.id) {
+    throw createTeamError || new Error('Failed to create Unsold team');
+  }
+
+  return createdTeam.id;
+}
+
 /**
  * POST /api/auction/mark-unsold
  * Mark current player as unsold and move to batch 10
@@ -60,12 +92,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Mark player as unsold by moving to batch 10
+    // First unsold: move player to batch 10.
+    // Second unsold (already in batch 10): assign to default Unsold team and remove from rotation.
+    const isUnsoldBatch = auctionState.current_batch === 10;
+
+    let updatePayload: {
+      batch_number?: number;
+      team_id?: string;
+      sold_price?: number;
+    };
+
+    if (isUnsoldBatch) {
+      const unsoldTeamId = await getOrCreateUnsoldTeamId();
+      updatePayload = {
+        team_id: unsoldTeamId,
+        sold_price: 0,
+      };
+    } else {
+      updatePayload = {
+        batch_number: 10,
+      };
+    }
+
     const { error: updateError } = await supabaseAdmin
       .from('players')
-      .update({
-        batch_number: 10,
-      })
+      .update(updatePayload)
       .eq('id', currentPlayer.id);
 
     if (updateError) throw updateError;
@@ -105,6 +156,25 @@ export async function POST(request: NextRequest) {
         nextBatch = firstUnsoldInNextBatch[0].batch_number;
         nextIndex = 0;
       } else {
+        if (auctionState.current_batch === 10) {
+          // All players in unsold batch are processed, so finish auction.
+          nextBatch = 10;
+          nextIndex = 0;
+          const { data: updatedState, error: updateStateError } = await supabaseAdmin
+            .from('auction_state')
+            .update({
+              current_batch: nextBatch,
+              current_player_index: nextIndex,
+              auction_started: false,
+            })
+            .eq('id', auctionState.id)
+            .select()
+            .single();
+
+          if (updateStateError) throw updateStateError;
+          return NextResponse.json(updatedState, { status: 200 });
+        }
+
         // Move to batch 10 (unsold batch) if no more regular batches
         nextBatch = 10;
         nextIndex = 0;
