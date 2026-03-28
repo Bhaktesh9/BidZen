@@ -59,6 +59,35 @@ npm run dev:reset
 - **No Public Signup**: Admin-only user creation with role assignment
 - **Production-Ready**: TypeScript, JWT auth, secure password hashing
 
+## Recent Updates (March 2026)
+
+- Added **Mark as Unsold** action in Controller flow.
+- Implemented **Unsold Batch** using **batch 10** (instead of batch 7).
+- Added second-pass unsold behavior:
+  - First unsold: player moves to batch 10.
+  - If marked unsold again in batch 10: player is assigned to auto-managed **Unsold** team.
+  - Auction completes after batch 10 is exhausted.
+- Added **Ending Page** after auction completion with summary stats:
+  - Total sold players
+  - Total amount raised
+  - Unsold count
+- Removed rankings and unsold-player listing from ending page for a cleaner finish.
+- Added clickable team cards in Super Admin dashboard to open a **Team Squad modal**.
+- Improved modal usability:
+  - Added visible header close button
+  - Added optional footer hiding for read-only views
+  - Improved sizing and scrolling on smaller screens
+- Improved mobile responsiveness across dashboards (Admin, Controller, Presenter, Team Owner):
+  - Better spacing, typography scaling, and card behavior
+  - Improved small-screen layout and readability
+- Added team export functionality:
+  - **Team Owner** can export only their team squad to **Excel**
+  - **Super Admin** can export all teams to a single Excel file with:
+    - One sheet per team
+    - Each sheet containing only that team's players
+- Removed PDF export option and standardized exports to Excel-only.
+- Excluded auto-managed **Unsold** team from normal bidding/operational flows where appropriate.
+
 ## 📋 Prerequisites
 
 - Node.js 18+

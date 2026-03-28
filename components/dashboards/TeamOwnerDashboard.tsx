@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Player, Team } from '@/types';
 import { Card } from '@/components/shared/Card';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
@@ -22,6 +22,25 @@ export function TeamOwnerDashboard({
   error,
 }: TeamOwnerDashboardProps) {
   const [isExporting, setIsExporting] = useState(false);
+
+  const stablePurchasedPlayers = useMemo(
+    () =>
+      [...purchasedPlayers].sort((firstPlayer, secondPlayer) => {
+        if (firstPlayer.batch_number !== secondPlayer.batch_number) {
+          return firstPlayer.batch_number - secondPlayer.batch_number;
+        }
+
+        const firstCreatedAt = new Date(firstPlayer.created_at).getTime();
+        const secondCreatedAt = new Date(secondPlayer.created_at).getTime();
+
+        if (firstCreatedAt !== secondCreatedAt) {
+          return firstCreatedAt - secondCreatedAt;
+        }
+
+        return firstPlayer.id.localeCompare(secondPlayer.id);
+      }),
+    [purchasedPlayers]
+  );
 
   const getInitials = (name: string) =>
     name
@@ -120,13 +139,13 @@ export function TeamOwnerDashboard({
               label="Export Squad"
             />
           </div>
-          {purchasedPlayers.length === 0 ? (
+          {stablePurchasedPlayers.length === 0 ? (
             <p className="text-textSecondary text-center py-8">
               No players purchased yet.
             </p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-              {purchasedPlayers.map((player) => (
+              {stablePurchasedPlayers.map((player) => (
                 <div
                   key={player.id}
                   className="border border-subtle bg-elevated rounded-smpanel overflow-hidden min-h-[200px] sm:min-h-[220px]"
@@ -150,7 +169,7 @@ export function TeamOwnerDashboard({
                     </div>
                   )}
                   <div className="p-3 sm:p-4">
-                    <h3 className="font-bold text-textPrimary text-sm sm:text-base break-words">{player.name}</h3>
+                    <h3 className="font-bold !text-white text-sm sm:text-base break-words" style={{ color: '#ffffff' }}>{player.name}</h3>
                     <p className="text-xs sm:text-sm text-textSecondary capitalize">{player.role}</p>
                     <div className="mt-2 pt-2 border-t border-subtle">
                       <p className="bz-sub">Purchased for</p>

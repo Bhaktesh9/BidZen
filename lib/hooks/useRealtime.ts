@@ -178,7 +178,9 @@ export function usePlayers(batchNumber?: number) {
         .from('players')
         .select('*')
         .order('batch_number', { ascending: true })
-        .order('created_at', { ascending: true });
+        .order('created_at', { ascending: true })
+        // Tie-break with id so list ordering stays stable across realtime refreshes.
+        .order('id', { ascending: true });
       if (batchNumber) {
         query = query.eq('batch_number', batchNumber);
       }
