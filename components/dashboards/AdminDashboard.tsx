@@ -46,6 +46,8 @@ export function AdminDashboard({
   const [showTeamModal, setShowTeamModal] = useState(false);
   const [showPlayerModal, setShowPlayerModal] = useState(false);
   const [showResetAuctionModal, setShowResetAuctionModal] = useState(false);
+  const [showTeamSquadModal, setShowTeamSquadModal] = useState(false);
+  const [selectedTeamForSquad, setSelectedTeamForSquad] = useState<Team | null>(null);
   const [playerTeamSelections, setPlayerTeamSelections] = useState<Record<string, string>>({});
 
   // Form states
@@ -262,13 +264,26 @@ export function AdminDashboard({
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {teams.map((team) => (
-                <div key={team.id} className="border border-subtle bg-elevated rounded-smpanel p-4">
+                <div
+                  key={team.id}
+                  className="border border-subtle bg-elevated rounded-smpanel p-4 cursor-pointer hover:border-primary hover:bg-elevated/80 transition-all"
+                  onClick={() => {
+                    setSelectedTeamForSquad(team);
+                    setShowTeamSquadModal(true);
+                  }}
+                >
                   <h3 className="text-lg font-bold text-textPrimary mb-2">{team.name}</h3>
                   <p className="text-textSecondary mb-4">Points: ${team.points.toLocaleString()}</p>
+                  <p className="text-xs text-textMuted mb-4">
+                    Players: {players.filter((p) => p.team_id === team.id).length}
+                  </p>
                   <Button
                     size="sm"
                     variant="danger"
-                    onClick={() => onDeleteTeam(team.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteTeam(team.id);
+                    }}
                   >
                     Delete
                   </Button>
@@ -582,6 +597,57 @@ export function AdminDashboard({
               <li>Live auction will be stopped</li>
             </ul>
           </div>
+        </Modal>
+
+        <Modal
+          isOpen={showTeamSquadModal}
+          title={selectedTeamForSquad ? `${selectedTeamForSquad.name} - Squad` : 'Team Squad'}
+          onClose={() => {
+            setShowTeamSquadModal(false);
+            setSelectedTeamForSquad(null);
+          }}
+          confirmText="Close"
+          onConfirm={() => {
+            setShowTeamSquadModal(false);
+            setSelectedTeamForSquad(null);
+          }}
+        >
+          {selectedTeamForSquad ? (
+            <div className="space-y-4">
+              <div className="p-4 bg-elevated border border-subtle rounded-smpanel">
+                <p className="text-sm text-textSecondary mb-1">Team Budget</p>
+                <p className="text-2xl font-bold text-success">${selectedTeamForSquad.points.toLocaleString()}</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-textPrimary mb-3">Players ({players.filter((p) => p.team_id === selectedTeamForSquad.id).length})</h3>
+                {players.filter((p) => p.team_id === selectedTeamForSquad.id).length > 0 ? (
+                  <div className="space-y-2 max-h-96 overflow-y-auto">
+                    {players
+                      .filter((p) => p.team_id === selectedTeamForSquad.id)
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((player) => (
+                        <div key={player.id} className="p-3 border border-subtle bg-elevated rounded-smpanel">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <p className="font-semibold text-textPrimary">{player.name}</p>
+                              <p className="text-xs text-textSecondary capitalize">{player.role}</p>
+                              <p className="text-xs text-textMuted mt-1">Batch {player.batch_number}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm font-bold text-gold">${player.sold_price?.toLocaleString() || 'N/A'}</p>
+                              <p className="text-xs text-textMuted">sold price</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                ) : (
+                  <p className="text-textSecondary text-sm">No players acquired yet</p>
+                )}
+              </div>
+            </div>
+          ) : null}
         </Modal>
       </div>
     </div>

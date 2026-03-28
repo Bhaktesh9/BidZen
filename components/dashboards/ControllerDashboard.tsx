@@ -14,6 +14,7 @@ interface ControllerDashboardProps {
   playersInBatch: number;
   currentBatch: number;
   onSubmitBid: (price: number, teamId: string) => Promise<void>;
+  onMarkUnsold: () => Promise<void>;
   isLoading: boolean;
   error: string | null;
 }
@@ -25,12 +26,14 @@ export function ControllerDashboard({
   playersInBatch,
   currentBatch,
   onSubmitBid,
+  onMarkUnsold,
   isLoading,
   error,
 }: ControllerDashboardProps) {
   const [bidPrice, setBidPrice] = useState('');
   const [selectedTeam, setSelectedTeam] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isMarkingUnsold, setIsMarkingUnsold] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,6 +46,15 @@ export function ControllerDashboard({
       setSelectedTeam('');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleMarkUnsold = async () => {
+    setIsMarkingUnsold(true);
+    try {
+      await onMarkUnsold();
+    } finally {
+      setIsMarkingUnsold(false);
     }
   };
 
@@ -159,10 +171,22 @@ export function ControllerDashboard({
                   variant="success"
                   size="lg"
                   isLoading={isSubmitting}
-                  disabled={!bidPrice || !selectedTeam}
+                  disabled={!bidPrice || !selectedTeam || !currentPlayer}
                   className="w-full"
                 >
                   Submit Bid
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="lg"
+                  isLoading={isMarkingUnsold}
+                  disabled={!currentPlayer}
+                  onClick={handleMarkUnsold}
+                  className="w-full"
+                >
+                  Mark as Unsold
                 </Button>
               </form>
             </Card>

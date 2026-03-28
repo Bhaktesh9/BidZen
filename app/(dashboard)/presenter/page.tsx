@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useAuctionState, usePlayers, useTeams } from '@/lib/hooks/useRealtime';
 import { PresenterDashboard } from '@/components/dashboards/PresenterDashboard';
+import { EndingPage } from '@/components/dashboards/EndingPage';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { Navbar } from '@/components/shared/Navbar';
 import { removeToken, getToken } from '@/lib/token';
@@ -221,22 +222,32 @@ export default function PresenterPage() {
   // Find low points teams
   const lowPointsTeams = (teams as Team[]).filter((t) => t.points < 1000);
 
+  // Calculate total raised
+  const totalRaised = players.reduce((sum, p) => sum + (p.sold_price || 0), 0);
+
+  // Check if auction is complete
+  const isAuctionComplete = !currentPlayer && !auctionState?.auction_started;
+
   return (
     <>
       <Navbar user={user} onLogout={handleLogout} />
-      <PresenterDashboard
-        currentPlayer={currentPlayer}
-        currentPlayerKey={currentPlayerKey}
-        announcement={announcement}
-        auctionStarted={auctionState?.auction_started || false}
-        playersRemaining={playersRemaining}
-        playersInBatch={playersInBatch}
-        currentBatch={auctionState?.current_batch || 1}
-        lowPointsTeams={lowPointsTeams}
-        onStartAuction={handleStartAuction}
-        isLoading={userLoading}
-        error={defaultError}
-      />
+      {isAuctionComplete ? (
+        <EndingPage teams={teams as Team[]} players={players} totalRaised={totalRaised} />
+      ) : (
+        <PresenterDashboard
+          currentPlayer={currentPlayer}
+          currentPlayerKey={currentPlayerKey}
+          announcement={announcement}
+          auctionStarted={auctionState?.auction_started || false}
+          playersRemaining={playersRemaining}
+          playersInBatch={playersInBatch}
+          currentBatch={auctionState?.current_batch || 1}
+          lowPointsTeams={lowPointsTeams}
+          onStartAuction={handleStartAuction}
+          isLoading={userLoading}
+          error={defaultError}
+        />
+      )}
     </>
   );
 }

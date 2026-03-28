@@ -88,6 +88,31 @@ export default function ControllerPage() {
     }
   };
 
+  const handleMarkUnsold = async () => {
+    try {
+      const response = await fetch('/api/auction/mark-unsold', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getToken() || ''}`,
+        },
+      });
+
+      if (!response.ok) {
+        const result = await response.json().catch(() => null);
+        setDefaultError(result?.message || 'Failed to mark player as unsold');
+        throw new Error(result?.message || 'Failed to mark player as unsold');
+      }
+
+      setDefaultError(null);
+      await Promise.all([refetchAuctionState(), refetchPlayers(), refetchTeams()]);
+      await fetchCurrentPlayer();
+    } catch (error) {
+      setDefaultError(error instanceof Error ? error.message : 'Error marking as unsold');
+      throw error;
+    }
+  };
+
   const handleLogout = () => {
     removeToken();
     router.push('/login');
@@ -120,6 +145,7 @@ export default function ControllerPage() {
         playersInBatch={playersInBatch}
         currentBatch={auctionState?.current_batch || 1}
         onSubmitBid={handleSubmitBid}
+        onMarkUnsold={handleMarkUnsold}
         isLoading={userLoading}
         error={defaultError}
       />
