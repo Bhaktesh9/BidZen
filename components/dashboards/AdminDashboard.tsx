@@ -7,7 +7,7 @@ import { Button } from '@/components/shared/Button';
 import { Modal } from '@/components/shared/Modal';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { ExportFormatSelector } from '@/components/shared/ExportFormatSelector';
-import { exportAllTeamsToExcel, exportAllTeamsToPDF } from '@/lib/exportUtils';
+import { exportAllTeamsToExcel } from '@/lib/exportUtils';
 
 interface AdminDashboardProps {
   activeTab: 'users' | 'teams' | 'players';
@@ -72,15 +72,6 @@ export function AdminDashboard({
     setIsExporting(true);
     try {
       exportAllTeamsToExcel(teams, players);
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
-  const handleExportAllTeamsPDF = () => {
-    setIsExporting(true);
-    try {
-      exportAllTeamsToPDF(teams, players);
     } finally {
       setIsExporting(false);
     }
@@ -287,7 +278,6 @@ export function AdminDashboard({
                 <Button onClick={() => setShowTeamModal(true)} className="w-full sm:w-auto">Create Team</Button>
                 <ExportFormatSelector
                   onExportExcel={handleExportAllTeamsExcel}
-                  onExportPDF={handleExportAllTeamsPDF}
                   isLoading={isExporting}
                   label="Export All"
                 />

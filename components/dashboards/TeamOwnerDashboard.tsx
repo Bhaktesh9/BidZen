@@ -6,7 +6,7 @@ import { Player, Team } from '@/types';
 import { Card } from '@/components/shared/Card';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { ExportFormatSelector } from '@/components/shared/ExportFormatSelector';
-import { exportTeamToExcel, exportTeamToPDF } from '@/lib/exportUtils';
+import { exportTeamToExcel } from '@/lib/exportUtils';
 
 interface TeamOwnerDashboardProps {
   team: Team | null;
@@ -35,15 +35,6 @@ export function TeamOwnerDashboard({
     setIsExporting(true);
     try {
       exportTeamToExcel(team!, purchasedPlayers);
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
-  const handleExportPDF = () => {
-    setIsExporting(true);
-    try {
-      exportTeamToPDF(team!, purchasedPlayers);
     } finally {
       setIsExporting(false);
     }
@@ -125,7 +116,6 @@ export function TeamOwnerDashboard({
             <h2 className="text-2xl font-display font-bold text-textPrimary">Your Squad</h2>
             <ExportFormatSelector
               onExportExcel={handleExportExcel}
-              onExportPDF={handleExportPDF}
               isLoading={isExporting}
               label="Export Squad"
             />
