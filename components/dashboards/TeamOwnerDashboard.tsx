@@ -1,10 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 import { Player, Team } from '@/types';
 import { Card } from '@/components/shared/Card';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { ExportFormatSelector } from '@/components/shared/ExportFormatSelector';
+import { exportTeamToExcel, exportTeamToPDF } from '@/lib/exportUtils';
 
 interface TeamOwnerDashboardProps {
   team: Team | null;
@@ -19,6 +21,8 @@ export function TeamOwnerDashboard({
   isLoading,
   error,
 }: TeamOwnerDashboardProps) {
+  const [isExporting, setIsExporting] = useState(false);
+
   const getInitials = (name: string) =>
     name
       .split(' ')
@@ -26,6 +30,24 @@ export function TeamOwnerDashboard({
       .join('')
       .slice(0, 2)
       .toUpperCase();
+
+  const handleExportExcel = () => {
+    setIsExporting(true);
+    try {
+      exportTeamToExcel(team!, purchasedPlayers);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleExportPDF = () => {
+    setIsExporting(true);
+    try {
+      exportTeamToPDF(team!, purchasedPlayers);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -98,7 +120,16 @@ export function TeamOwnerDashboard({
         </Card>
 
         {/* Purchased Players */}
-        <Card title="Your Squad">
+        <Card>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+            <h2 className="text-2xl font-display font-bold text-textPrimary">Your Squad</h2>
+            <ExportFormatSelector
+              onExportExcel={handleExportExcel}
+              onExportPDF={handleExportPDF}
+              isLoading={isExporting}
+              label="Export Squad"
+            />
+          </div>
           {purchasedPlayers.length === 0 ? (
             <p className="text-textSecondary text-center py-8">
               No players purchased yet.

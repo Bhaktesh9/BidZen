@@ -6,6 +6,8 @@ import { Card } from '@/components/shared/Card';
 import { Button } from '@/components/shared/Button';
 import { Modal } from '@/components/shared/Modal';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { ExportFormatSelector } from '@/components/shared/ExportFormatSelector';
+import { exportAllTeamsToExcel, exportAllTeamsToPDF } from '@/lib/exportUtils';
 
 interface AdminDashboardProps {
   activeTab: 'users' | 'teams' | 'players';
@@ -49,6 +51,7 @@ export function AdminDashboard({
   const [showTeamSquadModal, setShowTeamSquadModal] = useState(false);
   const [selectedTeamForSquad, setSelectedTeamForSquad] = useState<Team | null>(null);
   const [playerTeamSelections, setPlayerTeamSelections] = useState<Record<string, string>>({});
+  const [isExporting, setIsExporting] = useState(false);
 
   // Form states
   const [userForm, setUserForm] = useState({ username: '', password: '', role: 'presenter', teamId: '' });
@@ -64,6 +67,24 @@ export function AdminDashboard({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formatBatchLabel = (batchNumber: number) =>
     batchNumber === 10 ? 'Unsold Batch' : `Batch ${batchNumber}`;
+
+  const handleExportAllTeamsExcel = () => {
+    setIsExporting(true);
+    try {
+      exportAllTeamsToExcel(teams, players);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleExportAllTeamsPDF = () => {
+    setIsExporting(true);
+    try {
+      exportAllTeamsToPDF(teams, players);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const sortedPlayers = [...players].sort((firstPlayer, secondPlayer) => {
     if (firstPlayer.batch_number !== secondPlayer.batch_number) {
@@ -262,7 +283,15 @@ export function AdminDashboard({
           <Card>
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
               <h2 className="text-2xl font-display font-bold text-textPrimary">Teams</h2>
-              <Button onClick={() => setShowTeamModal(true)} className="w-full sm:w-auto">Create Team</Button>
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <Button onClick={() => setShowTeamModal(true)} className="w-full sm:w-auto">Create Team</Button>
+                <ExportFormatSelector
+                  onExportExcel={handleExportAllTeamsExcel}
+                  onExportPDF={handleExportAllTeamsPDF}
+                  isLoading={isExporting}
+                  label="Export All"
+                />
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {teams.map((team) => (
